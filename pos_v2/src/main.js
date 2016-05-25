@@ -54,13 +54,101 @@ function addCartItemInfo(mergecartItems) {
             result.push(existItem);
         }
     })
+    return result;
+}
 
+function transferPromotion(mergecartItemsWithAllInfo) {
+    var result = [];
+    var promotionItems = [];
+    promotionItems = loadPromotions()[0].barcodes;
+    mergecartItemsWithAllInfo.forEach(function (item) {
+        var promotionItem;
+        var freeCount = 0;
+        if (promotionItems.indexOf(item.barcode) > 0) {
+            freeCount = Math.floor(item.count / 3);
+        }
+        promotionItem = Object.assign({
+            promotionCount: freeCount,
+            promotionPrice: freeCount * item.price
+        }, item)
+        result.push(promotionItem);
+    })
+    return result;
+}
 
-    console.debug(result);
+function calculateSubprice(items) {
+    return items.map(function (item) {
+        return Object.assign({
+            subTotalPrice: item.price * (item.count - item.promotionCount)
+        }, item);
+    });
+}
+
+function calculateTotalPrice(items) {
+    return items.reduce(function (a, b) {
+        return {
+            subTotalPrice: a.subTotalPrice + b.subTotalPrice
+        };
+    });
+}
+
+function calculatePromotionTotalPrice(items) {
+    return items.reduce(function (a, b) {
+        return {
+            promotionPrice: a.promotionPrice + b.promotionPrice
+        };
+    });
+}
+
+function dateDigitToString(num) {
+    return num < 10 ? '0' + num : num;
+};
+
+function getDateString() {
+    var currentDate = new Date(),
+        year = dateDigitToString(currentDate.getFullYear()),
+        month = dateDigitToString(currentDate.getMonth() + 1),
+        date = dateDigitToString(currentDate.getDate()),
+        hour = dateDigitToString(currentDate.getHours()),
+        minute = dateDigitToString(currentDate.getMinutes()),
+        second = dateDigitToString(currentDate.getSeconds()),
+        formattedDateString = year + '年' + month + '月' + date + '日 ' + hour + ':' + minute + ':' + second;
+    return formattedDateString;
+}
+
+function print(cartItems, freeItems, promotionTotalPrice, totalPrice) {
+    var result = '***<没钱赚商店>购物清单***\n' +
+        '打印时间：' + getDateString() + '\n' +
+        '----------------------\n';
+    cartItems.forEach(function (element) {
+        result += `名称：${element.name}，数量：${element.count}${element.unit}，单价：${element.price.toFixed(2)}(元)，小计：${element.subTotalPrice.toFixed(2)}(元)\n`;
+    });
+    result += '----------------------\n';
+    result += '挥泪赠送商品：\n';
+    freeItems.forEach(function (element) {
+        result += `名称：${element.name}，数量：${element.promotionCount}${element.unit}\n`;
+    });
+    result += '----------------------\n';
+    result += `总计：${totalPrice.subTotalPrice.toFixed(2)}(元)\n`;
+    result += `节省：${promotionTotalPrice.promotionPrice.toFixed(2)}(元)\n`;
+    result += '**********************';
+    console.log(result);
+}
+
+function getPromotionItems(items) {
+    return items.filter(function (item) {
+        return item.promotionCount != 0;
+    });
 }
 
 function printInventory(inputs) {
     var cartItems = splitTag(inputs);
     var mergecartItems = mergeCartItemCount(cartItems);
-    var mergecartItemsWithAllInfo = addCartItemInfo(mergecartItems)
+    var mergecartItemsWithAllInfo = addCartItemInfo(mergecartItems);
+    var promotionItems = transferPromotion(mergecartItemsWithAllInfo);
+    var promotionItemsWithSubprice = calculateSubprice(promotionItems);
+    var totalPrice = calculateTotalPrice(promotionItemsWithSubprice);
+    var promotionTotalPrice = calculatePromotionTotalPrice(promotionItemsWithSubprice);
+    var freeItems = getPromotionItems(promotionItemsWithSubprice);
+    print(promotionItemsWithSubprice, freeItems, promotionTotalPrice, totalPrice);
 }
