@@ -33,12 +33,34 @@ function mergeCartItemCount(cartItems) {
         existItem.count++;
 
     })
-    console.debug(result);
+
     return result;
 }
 
+function addCartItemInfo(mergecartItems) {
+    var result = [];
+    var allItems = loadAllItems();
+    allItems.forEach(function (item) {
+        var existItem = mergecartItems.find(function (mergecartItem) {
+            return item.barcode === mergecartItem.barcode;
+        })
+
+        if (existItem) {
+            existItem = Object.assign({
+                name: item.name,
+                unit: item.unit,
+                price: item.price
+            }, existItem)
+            result.push(existItem);
+        }
+    })
+
+
+    console.debug(result);
+}
 
 function printInventory(inputs) {
     var cartItems = splitTag(inputs);
     var mergecartItems = mergeCartItemCount(cartItems);
+    var mergecartItemsWithAllInfo = addCartItemInfo(mergecartItems)
 }
