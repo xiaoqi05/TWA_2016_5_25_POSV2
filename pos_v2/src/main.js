@@ -59,7 +59,13 @@ function addCartItemInfo(mergeCartItems) {
 function transferPromotion(mergeCartItemsWithAllInfo) {
     var result = [];
     var promotionItems = [];
-    promotionItems = loadPromotions()[0].barcodes;
+    var promotionArray = loadPromotions();
+    promotionArray.forEach(function (item) {
+        if (item.type == "BUY_TWO_GET_ONE_FREE") {
+            promotionItems = item.barcodes;
+        }
+    });
+
     mergeCartItemsWithAllInfo.forEach(function (item) {
         var promotionItem;
         var freeCount = 0;
@@ -115,9 +121,7 @@ function getDateString() {
 }
 
 function print(cartItems, freeItems, promotionTotalPrice, totalPrice) {
-    var result = '***<没钱赚商店>购物清单***\n' +
-        '打印时间：' + getDateString() + '\n' +
-        '----------------------\n';
+    var result = "***<没钱赚商店>购物清单***\n打印时间：" + getDateString() + "\n----------------------\n";
     cartItems.forEach(function (element) {
         result += `名称：${element.name}，数量：${element.count}${element.unit}，单价：${element.price.toFixed(2)}(元)，小计：${element.subTotalPrice.toFixed(2)}(元)\n`;
     });
