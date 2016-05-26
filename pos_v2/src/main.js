@@ -12,7 +12,7 @@ function splitTag(inputs) {
             barcode: result[0],
             count: count
         });
-    })
+    });
     return cartItems;
 }
 
@@ -21,7 +21,7 @@ function mergeCartItemCount(cartItems) {
     cartItems.forEach(function (cartItem) {
         var existItem = result.find(function (item) {
             return item.barcode === cartItem.barcode;
-        })
+        });
 
         if (!existItem) {
             existItem = Object.assign({}, cartItem);
@@ -32,7 +32,7 @@ function mergeCartItemCount(cartItems) {
         }
         existItem.count++;
 
-    })
+    });
 
     return result;
 }
@@ -43,17 +43,17 @@ function addCartItemInfo(mergecartItems) {
     allItems.forEach(function (item) {
         var existItem = mergecartItems.find(function (mergecartItem) {
             return item.barcode === mergecartItem.barcode;
-        })
+        });
 
         if (existItem) {
             existItem = Object.assign({
                 name: item.name,
                 unit: item.unit,
                 price: item.price
-            }, existItem)
+            }, existItem);
             result.push(existItem);
         }
-    })
+    });
     return result;
 }
 
@@ -70,13 +70,13 @@ function transferPromotion(mergecartItemsWithAllInfo) {
         promotionItem = Object.assign({
             promotionCount: freeCount,
             promotionPrice: freeCount * item.price
-        }, item)
+        }, item);
         result.push(promotionItem);
-    })
+    });
     return result;
 }
 
-function calculateSubprice(items) {
+function calculateSubPrice(items) {
     return items.map(function (item) {
         return Object.assign({
             subTotalPrice: item.price * (item.count - item.promotionCount)
@@ -102,7 +102,7 @@ function calculatePromotionTotalPrice(items) {
 
 function dateDigitToString(num) {
     return num < 10 ? '0' + num : num;
-};
+}
 
 function getDateString() {
     var currentDate = new Date(),
@@ -111,9 +111,8 @@ function getDateString() {
         date = dateDigitToString(currentDate.getDate()),
         hour = dateDigitToString(currentDate.getHours()),
         minute = dateDigitToString(currentDate.getMinutes()),
-        second = dateDigitToString(currentDate.getSeconds()),
-        formattedDateString = year + '年' + month + '月' + date + '日 ' + hour + ':' + minute + ':' + second;
-    return formattedDateString;
+        second = dateDigitToString(currentDate.getSeconds());
+    return year + '年' + month + '月' + date + '日 ' + hour + ':' + minute + ':' + second;
 }
 
 function print(cartItems, freeItems, promotionTotalPrice, totalPrice) {
@@ -146,7 +145,7 @@ function printInventory(inputs) {
     var mergeCartItems = mergeCartItemCount(cartItems);
     var mergeCartItemsWithAllInfo = addCartItemInfo(mergeCartItems);
     var promotionItems = transferPromotion(mergeCartItemsWithAllInfo);
-    var promotionItemsWithSubPrice = calculateSubprice(promotionItems);
+    var promotionItemsWithSubPrice = calculateSubPrice(promotionItems);
     var totalPrice = calculateTotalPrice(promotionItemsWithSubPrice);
     var promotionTotalPrice = calculatePromotionTotalPrice(promotionItemsWithSubPrice);
     var freeItems = getPromotionItems(promotionItemsWithSubPrice);
