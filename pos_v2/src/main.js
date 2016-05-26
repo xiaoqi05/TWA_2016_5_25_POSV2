@@ -31,18 +31,17 @@ function mergeCartItemCount(cartItems) {
             }
         }
         existItem.count++;
-
     });
 
     return result;
 }
 
-function addCartItemInfo(mergecartItems) {
+function addCartItemInfo(mergeCartItems) {
     var result = [];
     var allItems = loadAllItems();
     allItems.forEach(function (item) {
-        var existItem = mergecartItems.find(function (mergecartItem) {
-            return item.barcode === mergecartItem.barcode;
+        var existItem = mergeCartItems.find(function (mergeCartItem) {
+            return item.barcode === mergeCartItem.barcode;
         });
 
         if (existItem) {
@@ -57,11 +56,11 @@ function addCartItemInfo(mergecartItems) {
     return result;
 }
 
-function transferPromotion(mergecartItemsWithAllInfo) {
+function transferPromotion(mergeCartItemsWithAllInfo) {
     var result = [];
     var promotionItems = [];
     promotionItems = loadPromotions()[0].barcodes;
-    mergecartItemsWithAllInfo.forEach(function (item) {
+    mergeCartItemsWithAllInfo.forEach(function (item) {
         var promotionItem;
         var freeCount = 0;
         if (promotionItems.indexOf(item.barcode) > 0) {
