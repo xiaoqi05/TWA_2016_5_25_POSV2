@@ -143,12 +143,12 @@ function getPromotionItems(items) {
 
 function printInventory(inputs) {
     var cartItems = splitTag(inputs);
-    var mergecartItems = mergeCartItemCount(cartItems);
-    var mergecartItemsWithAllInfo = addCartItemInfo(mergecartItems);
-    var promotionItems = transferPromotion(mergecartItemsWithAllInfo);
-    var promotionItemsWithSubprice = calculateSubprice(promotionItems);
-    var totalPrice = calculateTotalPrice(promotionItemsWithSubprice);
-    var promotionTotalPrice = calculatePromotionTotalPrice(promotionItemsWithSubprice);
-    var freeItems = getPromotionItems(promotionItemsWithSubprice);
-    print(promotionItemsWithSubprice, freeItems, promotionTotalPrice, totalPrice);
+    var mergeCartItems = mergeCartItemCount(cartItems);
+    var mergeCartItemsWithAllInfo = addCartItemInfo(mergeCartItems);
+    var promotionItems = transferPromotion(mergeCartItemsWithAllInfo);
+    var promotionItemsWithSubPrice = calculateSubprice(promotionItems);
+    var totalPrice = calculateTotalPrice(promotionItemsWithSubPrice);
+    var promotionTotalPrice = calculatePromotionTotalPrice(promotionItemsWithSubPrice);
+    var freeItems = getPromotionItems(promotionItemsWithSubPrice);
+    print(promotionItemsWithSubPrice, freeItems, promotionTotalPrice, totalPrice);
 }
